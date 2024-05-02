@@ -12,9 +12,9 @@
         <form method="post">
             <div class="inputs">
                     <label for="num1">Primeiro Número:</label>
-                    <input type="text" id="num1" name="num1" placeholder="Digite o primeiro número" required>
+                    <input type="text" id="num1" name="num1" placeholder="Digite o primeiro número" >
                     <label for="num2">Segundo Número:</label>
-                    <input type="text" id="num2" name="num2" placeholder="Digite o segundo número" required>
+                    <input type="text" id="num2" name="num2" placeholder="Digite o segundo número">
 
             </div>
             <div class="operacoes">
@@ -27,19 +27,20 @@
                 <button type="submit" name="operacao" value="fatorial">Fatorial</button>
             </div>
             <?php
-                if (isset($_POST['num1']) && isset($_POST['num2']) && isset($_POST['operacao'])) {
+                if (!empty($_POST['num1']) && !empty($_POST['num2']) && isset($_POST['operacao'])) {
                     $num1 = str_replace(',', '.', $_POST['num1']); // Permite vírgula no input
                     $num2 = str_replace(',', '.', $_POST['num2']); // Permite vírgula no input
                     $operacao = $_POST['operacao'];
-
+                
                     $resultado = realizarOperacao($num1, $num2, $operacao);
-
+                
                     if ($resultado !== false) {
                         echo "<div class='resultado'>Resultado: " . number_format($resultado, 2) . "</div>";
-
                     } else {
                         echo "<div class='erro'>Erro: $mensagemErro</div>";
                     }
+                } else {
+                    echo "<div class='erro'>Campos não podem estar vazios!</div>";
                 }
 
                 function realizarOperacao($num1, $num2, $operacao) {
