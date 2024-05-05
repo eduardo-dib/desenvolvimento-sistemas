@@ -11,10 +11,10 @@
         <h1>Calculadora feita em PHP</h1>
         <form method="post">
             <div class="inputs">
-                    <label for="num1">Primeiro Número:</label>
-                    <input type="text" id="num1" name="num1" placeholder="Digite o primeiro número" >
-                    <label for="num2">Segundo Número:</label>
-                    <input type="text" id="num2" name="num2" placeholder="Digite o segundo número">
+                    <label for="n1">Primeiro Número:</label>
+                    <input type="text" id="n1" name="n1" placeholder="Digite um número" >
+                    <label for="n2">Segundo Número:</label>
+                    <input type="text" id="n2" name="n2" placeholder="Digite outro número">
 
             </div>
             <div class="operacoes">
@@ -27,64 +27,82 @@
                 <button type="submit" name="operacao" value="fatorial">Fatorial</button>
             </div>
             <?php
-                if (!empty($_POST['num1']) && !empty($_POST['num2']) && isset($_POST['operacao'])) {
-                    $num1 = str_replace(',', '.', $_POST['num1']); // Permite vírgula no input
-                    $num2 = str_replace(',', '.', $_POST['num2']); // Permite vírgula no input
+                if (isset($_POST['n1'], $_POST['n2'], $_POST['operacao'])) {
+                    $n1 = str_replace(',', '.', $_POST['n1']); 
+                    $n2 = str_replace(',', '.', $_POST['n2']); 
                     $operacao = $_POST['operacao'];
                 
-                    $resultado = realizarOperacao($num1, $num2, $operacao);
+                    if ($n1 !== '' && $n2 !== '') {
+                        $resultado = realizarOperacao($n1, $n2, $operacao);
                 
-                    if ($resultado !== false) {
-                        echo "<div class='resultado'>Resultado: " . number_format($resultado, 2) . "</div>";
+                        if ($resultado !== false) {
+                            echo "<div class='resultado'>Resultado: " . number_format($resultado, 2) . "</div>";
+                        } else {
+                            echo "<div class='erro'>Erro: $erro</div>";
+                        }
                     } else {
-                        echo "<div class='erro'>Erro: $mensagemErro</div>";
+                        echo "<div class='erro'>Por favor, preencha todos os campos!</div>";
                     }
                 } else {
                     echo "<div class='erro'>Campos não podem estar vazios!</div>";
                 }
 
-                function realizarOperacao($num1, $num2, $operacao) {
-                    global $mensagemErro;
-
-                    if (is_numeric($num1) && is_numeric($num2)) {
-                        $num1 = floatval($num1);
-                        $num2 = floatval($num2);
+                function realizarOperacao($n1, $n2, $operacao) {
+                    global $erro;
+                    if (is_numeric($n1) && is_numeric($n2)) {
+                        $n1 = floatval($n1);
+                        $n2 = floatval($n2);
 
                         switch ($operacao) {
                             case '+':
-                                return $num1 + $num2;
+                                return $n1 + $n2;
                             case '-':
-                                return $num1 - $num2;
+                                return $n1 - $n2;
                             case '*':
-                                return $num1 * $num2;
+                                return $n1 * $n2;
                             case '/':
-                                if ($num2 == 0) {
-                                    $mensagemErro = "É impossível a divisão por 0!";
+                                if ($n2 == 0) {
+                                    $erro = "É impossível a divisão por 0!";
                                     return false;
                                 } else {
-                                    return $num1 / $num2;
+                                    return $n1 / $n2;
                                 }
                             case '^':
-                                if ($num2 == 0) {
+                                if ($n2 == 0) {
                                     return 1;
                                 }
-                                elseif($num2 == 1){
-                                    return $num1;
+                                elseif($n2 == 1){
+                                    return $n1;
                                 
                                 } else {
-                                    return $num1 ** $num2;
+                                    return $n1 ** $n2;
                                 }
                             case 'raiz':
-                                $resultadoRaiz = sqrt($num1 + $num2);
-                                if (!is_numeric($resultadoRaiz)) {
-                                    $mensagemErro = "Raiz quadrada negativa!";
+                                $resultadoRaiz = $n1 + $n2;
+                                if ($resultadoRaiz < 0) {
+                                    $erro = "Não é possível extrair raiz quadrada de um número negativo";
                                     return false;
                                 } else {
-                                    return $resultadoRaiz;
+                                    
+                                    $true = $resultadoRaiz / 2;
+                                    $precisao = 0.0001; 
+                                    $loop = 0; 
+                            
+                                    while (abs($true * $true - $resultadoRaiz) > $loop) {
+                                        $true = ($true + $resultadoRaiz / $true) / 2;
+                                        $loop++;
+                            
+                        
+                                        if ($loop > 1000) {
+                                            $erro = "Limite máximo de iterações alcançado";
+                                            return false;
+                                        }
+                                    }
+                                    return $true;
                                 }
                             case 'fatorial':
                                 $resultadoFatorial = 1;
-                                for ($i = 1; $i <= ($num1 + $num2); $i++) {
+                                for ($i = 1; $i <= ($n1 + $n2); $i++) {
                                     $resultadoFatorial *= $i;
                                 }
                                 return $resultadoFatorial;
@@ -93,7 +111,7 @@
                                 return false;
                         }
                     } else {
-                        $mensagemErro = "Valores inválidos!";
+                        $erro = "Valores inválidos!";
                         return false;
                     }
                 }
@@ -105,18 +123,16 @@
     </footer>
 
     <script>
-        // Adiciona evento de keydown aos campos de entrada
-        document.getElementById("num1").addEventListener("keydown", apenasNumeros);
-        document.getElementById("num2").addEventListener("keydown", apenasNumeros);
+        document.getElementById("n1").addEventListener("keydown", apenasNumeros);
+        document.getElementById("n2").addEventListener("keydown", apenasNumeros);
 
-        // Função para permitir apenas números nos campos de entrada
+    
         function apenasNumeros(event) {
-            // Permite backspace, delete, tab, escape, enter
             if (event.key == "Backspace" || event.key == "Delete" || event.key == "Tab" || event.key == "Escape" || event.key == "Enter") {
                 return;
             }
 
-            // Verifica se o caractere digitado é um número
+
             if (isNaN(parseInt(event.key))) {
                 event.preventDefault();
             }
