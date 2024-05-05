@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora feita em PHP</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
@@ -128,7 +128,8 @@
 
     
         function apenasNumeros(event) {
-            if (event.key == "Backspace" || event.key == "Delete" || event.key == "Tab" || event.key == "Escape" || event.key == "Enter") {
+            if (event.key == "Backspace" || event.key == "Delete" || event.key == "Tab" || event.key == "Escape" || event.key == "Enter" || 
+        event.key == "-") {
                 return;
             }
 
